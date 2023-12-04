@@ -1,0 +1,22 @@
+server:
+  port: 8085
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: true
+    show-sql: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  kafka:
+    producer:
+      bootstrap-servers: 127.0.0.1:9092
+      key-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  elasticsearch:
+    uris: 10.10.31.150:9200
+kafka:
+  group-id: data-processor
+  topics: stress_request_success_1s,stress_request_fail_1s
+  address: 10.10.226.23:9092
