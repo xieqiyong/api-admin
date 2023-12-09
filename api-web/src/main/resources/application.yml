@@ -16,7 +16,12 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   elasticsearch:
     uris: 10.10.31.150:9200
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 kafka:
   group-id: data-processor
-  topics: stress_request_success_1s,stress_request_fail_1s
+  topics: stress_request_success_1s,stress_request_fail_1s,stress_request_1s
   address: 10.10.226.23:9092
+

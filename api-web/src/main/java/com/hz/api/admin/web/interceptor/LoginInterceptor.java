@@ -2,6 +2,7 @@ package com.hz.api.admin.web.interceptor;
 
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
+import com.hz.api.admin.common.Result.ResultInfo;
 import com.hz.api.admin.model.bo.UserInfoBO;
 import com.hz.api.admin.model.entity.ApiUsersEntity;
 import com.hz.api.admin.web.config.thread.UserContextHolder;
@@ -16,8 +17,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 @Component
 @Slf4j
@@ -30,8 +33,11 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("token");
         if (StringUtils.isBlank(token)) {
-            response.setStatus(401);
-            return false;
+            token = getCookie(request);
+            if(StringUtils.isBlank(token)){
+                response.setStatus(401);
+                return false;
+            }
         }
         JWT jwt = JWTUtil.parseToken(token);
         String userId = jwt.getPayload("userId").toString();
@@ -53,5 +59,22 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
 
+    }
+
+    public String getCookie(HttpServletRequest request){
+        Cookie[] cookies = request.getCookies();
+        String token = "";
+        if (ObjectUtils.isNotEmpty(cookies)) {
+            if (Objects.nonNull(cookies)) {
+                for (Cookie cookie : cookies) {
+                    if (cookie != null) {
+                        if ("token".equals(cookie.getName())) {
+                            token = cookie.getValue();
+                        }
+                    }
+                }
+            }
+        }
+        return token;
     }
 }

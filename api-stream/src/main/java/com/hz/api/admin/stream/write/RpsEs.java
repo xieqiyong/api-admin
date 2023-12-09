@@ -28,7 +28,7 @@ public class RpsEs implements WriteEsManager{
 
     @Override
     public String topic() {
-        return EsIndexEnum.RPS_SUCCESS.getIndex();
+        return EsIndexEnum.RPS.getIndex();
     }
 
     @Override

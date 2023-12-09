@@ -36,43 +36,59 @@ public class DataCenterServiceImpl implements DataCenterService {
     public ResultInfo getRps(long stressId, long startTime, long endTime) {
         BoolQueryBuilder builder = QueryBuilders.boolQuery()
                         .must(QueryBuilders.rangeQuery("ts").gte(startTime).lte(endTime));
-        List<RpsVO> result = this.search(EsIndexEnum.RPS_SUCCESS.getIndex(),
+        List<RpsVO> result = this.search(EsIndexEnum.RPS.getIndex(),
                 SearchSourceBuilder.searchSource().size(1000).query(builder)
                         .sort("ts", SortOrder.ASC), RpsVO.class
         );
         Set<String> keySet = new HashSet<>();
         HashSet<String> time = new HashSet<>();
         Map<String, List<Long>> retMap = new HashMap<>();
-        Map<String, List<Long>> retErrMap = new HashMap<>();
+        Map<String, List<Long>> errMap = new HashMap<>();
+        Map<String, List<Long>> responseTime = new HashMap<>();
         for (RpsVO rpsVO : result) {
             LocalDateTime localDateTime = LocalDateTime
                     .ofEpochSecond(rpsVO.getTs()/1000, 0, ZoneOffset.of("+8"));
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            String key = rpsVO.getKey().substring(0,rpsVO.getKey().length() -28);
+            String key = rpsVO.getSampleLabel();
             rpsVO.setKey(key);
             keySet.add(key);
+
             List<Long> counts = new ArrayList<>();
-            counts.add(rpsVO.getCount());
+            List<Long> errCounts = new ArrayList<>();
+            List<Long> responseCount = new ArrayList<>();
+            counts.add(rpsVO.getSuccessCount());
+            errCounts.add(rpsVO.getErrCount());
+            responseCount.add(rpsVO.getTime());
+            // 成功数
             if(retMap.containsKey(key)){
-                retMap.get(key).add(rpsVO.getCount());
+                retMap.get(key).add(rpsVO.getSuccessCount());
             }else{
                 retMap.put(key, counts);
             }
+            // 错误数
+            if(errMap.containsKey(key)){
+                errMap.get(key).add(rpsVO.getErrCount());
+            }else{
+                errMap.put(key, errCounts);
+            }
+            // 响应时间
+            if(responseTime.containsKey(key)){
+                responseTime.get(key).add(rpsVO.getTime());
+            }else{
+                responseTime.put(key, responseCount);
+            }
+
             if(!time.contains(rpsVO.getTs())){
                 time.add(localDateTime.format(dateTimeFormatter));
             }
         }
         Map<String, Object> ret = new HashMap<>();
         ret.put("data", retMap);
-        ret.put("errData", retErrMap);
+        ret.put("errData", errMap);
         ret.put("key", keySet);
+        ret.put("responseTime", responseTime);
         ret.put("time", time.stream().sorted().collect(Collectors.toList()));
         return ResultInfo.success(ret);
-    }
-
-    @Override
-    public ResultInfo getErrRps(Long stressId, long startTime, long endTime) {
-        return null;
     }
 
     public <T> List<T> search(String indexName, SearchSourceBuilder searchSourceBuilder, Class<T> clazz) {

@@ -19,4 +19,6 @@ public class RequestMetric {
 
     private long errorCount;
 
+    private long time;
+
 }

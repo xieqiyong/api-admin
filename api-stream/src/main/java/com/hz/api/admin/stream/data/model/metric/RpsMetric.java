@@ -12,7 +12,7 @@ public class RpsMetric implements Serializable {
 
     private Long count = 1L;
 
-    private Long errCount = 1L;
+    private Long errCount = 0L;
 
     private long startTime;
 
@@ -24,16 +24,18 @@ public class RpsMetric implements Serializable {
 
     private String sampleLabel;
 
-    private long errorCount;
+    private Long successCount = 0L;
+
+    private long time;
 
     public RpsMetric add(RpsMetric res) {
+        if(this.isSuccessful()){
+            this.successCount ++;
+        }else{
+            this.errCount ++;
+        }
+        this.time = this.time + res.getTime();
         this.count ++;
-        this.endTime = res.getEndTime();
-        return this;
-    }
-
-    public RpsMetric addErr(RpsMetric res){
-        this.errCount ++;
         this.endTime = res.getEndTime();
         return this;
     }

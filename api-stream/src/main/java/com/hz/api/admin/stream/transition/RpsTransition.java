@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class RpsTransition implements Transition<RequestMetric>{
     @Override
     public String topic() {
-        return EsIndexEnum.RPS_SUCCESS.getTopic();
+        return EsIndexEnum.RPS.getTopic();
     }
 
     @Override
@@ -64,7 +64,7 @@ public class RpsTransition implements Transition<RequestMetric>{
                     value.setKey(newKey);
                     return KeyValue.pair(newKey, value);
                 })
-                .to(EsIndexEnum.RPS_SUCCESS.getIndex(), Produced.with(Serdes.String(), new RpsMetricSerde()));
+                .to(EsIndexEnum.RPS.getIndex(), Produced.with(Serdes.String(), new RpsMetricSerde()));
 
     }
 

@@ -21,11 +21,4 @@ public class DataCenterController {
                              @RequestParam("endTime") long endTime){
         return dataCenterService.getRps(stressId, startTime, endTime);
     }
-
-    @GetMapping("/getErrRps")
-    public ResultInfo getErrRps(@RequestParam("stressId") Long stressId,
-                             @RequestParam("startTime") long startTime,
-                             @RequestParam("endTime") long endTime){
-        return dataCenterService.getErrRps(stressId, startTime, endTime);
-    }
 }

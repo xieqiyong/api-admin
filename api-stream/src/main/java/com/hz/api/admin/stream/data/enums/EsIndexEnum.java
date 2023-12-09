@@ -7,7 +7,8 @@ import java.util.List;
 public enum EsIndexEnum {
 
     RPS_SUCCESS("stress_request_success_1s", "stress_request_success_detail"),
-    RPS_FAIL("stress_request_fail_1s", "stress_request_fail_detail");
+    RPS_FAIL("stress_request_fail_1s", "stress_request_fail_detail"),
+    RPS("stress_request_1s","stress_request_detail");
 
     public String getIndex() {
         return index;

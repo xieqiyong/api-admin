@@ -21,7 +21,13 @@ public class RpsVO {
 
     private String sampleLabel;
 
-    private long errorCount;
-
     private boolean successful;
+
+    private Long successCount;
+
+    private long time;
+
+    public long getTime(){
+        return time / count;
+    }
 }

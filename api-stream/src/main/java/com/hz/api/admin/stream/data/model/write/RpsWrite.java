@@ -25,5 +25,9 @@ public class RpsWrite implements Serializable {
 
     private String sampleLabel;
 
-    private long errorCount;
+    private long errCount;
+
+    private long successCount;
+
+    private long time;
 }

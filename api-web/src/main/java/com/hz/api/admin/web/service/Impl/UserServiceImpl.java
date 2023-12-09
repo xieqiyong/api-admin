@@ -7,7 +7,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.hz.api.admin.common.Result.ResultInfo;
 import com.hz.api.admin.common.exception.BizException;
+import com.hz.api.admin.model.bo.UserInfoBO;
 import com.hz.api.admin.model.dao.ApiUserMenuDao;
 import com.hz.api.admin.model.dao.ApiUserPasswordDao;
 import com.hz.api.admin.model.dao.ApiUsersDao;
@@ -100,6 +102,14 @@ public class UserServiceImpl implements UserService {
         return new LambdaQueryChainWrapper<>(this.apiUsersDao)
                 .eq(ApiUsersEntity::getId, userId)
                 .one();
+    }
+
+    @Override
+    public ResultInfo getUserInfo() {
+        UserInfoBO userInfoBO = UserContextHolder.getAccountInfoDTO();
+        userInfoBO.setPassword("");
+        userInfoBO.setSalt("");
+        return ResultInfo.success(userInfoBO);
     }
 
     public List<UserMenuVO> buildTree(List<UserMenuVO> list,

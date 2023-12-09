@@ -1,6 +1,7 @@
 package com.hz.api.admin.web.service;
 
 import com.github.pagehelper.PageInfo;
+import com.hz.api.admin.common.Result.ResultInfo;
 import com.hz.api.admin.model.entity.ApiUserPasswordEntity;
 import com.hz.api.admin.model.entity.ApiUsersEntity;
 import com.hz.api.admin.model.request.UserLoginRequest;
@@ -23,4 +24,6 @@ public interface UserService {
     List<UserMenuVO> getUserMenu();
 
     ApiUsersEntity getUserInfoById(String userId);
+
+    ResultInfo getUserInfo();
 }

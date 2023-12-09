@@ -3,6 +3,7 @@ package com.hz.api.admin.web.app;
 import com.hz.api.admin.common.Result.ResultInfo;
 import com.hz.api.admin.model.request.UserLoginRequest;
 import com.hz.api.admin.model.request.UserPasswordRequest;
+import com.hz.api.admin.web.config.thread.UserContextHolder;
 import com.hz.api.admin.web.service.UserService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +56,10 @@ public class UserController {
                 "sys:user:export"};
 
         return ResultInfo.success(Arrays.stream(permission).toArray());
+    }
+
+    @GetMapping("/info")
+    public ResultInfo getUserInfo(){
+        return userService.getUserInfo();
     }
 }
