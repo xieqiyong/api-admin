@@ -8,7 +8,11 @@ import com.hz.api.admin.common.Result.ResultInfo;
 import com.hz.api.admin.common.exception.BizException;
 import com.hz.api.admin.model.bo.ScriptListBO;
 import com.hz.api.admin.model.dao.ApiScriptsDao;
+import com.hz.api.admin.model.dao.ApiStressSceneDao;
 import com.hz.api.admin.model.entity.ApiScriptsEntity;
+import com.hz.api.admin.model.entity.ApiStressSceneEntity;
+import com.hz.api.admin.model.enums.SceneState;
+import com.hz.api.admin.model.request.SceneRequest;
 import com.hz.api.admin.stream.util.FilePathUtils;
 import com.hz.api.admin.web.config.thread.UserContextHolder;
 import com.hz.api.admin.web.service.ScriptService;
@@ -36,6 +40,9 @@ public class ScriptServiceImpl implements ScriptService {
 
     @Resource
     private ApiScriptsDao apiScriptsDao;
+
+    @Resource
+    private ApiStressSceneDao apiStressSceneDao;
 
     @Override
     @Transactional
@@ -100,5 +107,32 @@ public class ScriptServiceImpl implements ScriptService {
         queryWrapper.eq("user_id", UserContextHolder.getUserId());
         queryWrapper.in("id", ids);
         this.apiScriptsDao.delete(queryWrapper);
+    }
+
+    @Override
+    public ResultInfo addScene(SceneRequest sceneRequest) {
+        LambdaQueryChainWrapper<ApiStressSceneEntity> queryChainWrapper =  new LambdaQueryChainWrapper<>(this.apiStressSceneDao);
+        ApiStressSceneEntity apiStressScene = queryChainWrapper
+                .eq(ApiStressSceneEntity::getSceneName, sceneRequest.getSceneName())
+                .eq(ApiStressSceneEntity::getUserId, UserContextHolder.getUserId())
+                .one();
+        if(ObjectUtils.isNotEmpty(apiStressScene)){
+            throw new BizException("场景名称已存在");
+        }
+        ApiStressSceneEntity apiStressSceneEntity = new ApiStressSceneEntity();
+        apiStressSceneEntity.setScriptId(sceneRequest.getScriptId());
+        apiStressSceneEntity.setCreateTime(new Date());
+        apiStressSceneEntity.setSceneName(sceneRequest.getSceneName());
+        apiStressSceneEntity.setSceneState(SceneState.NEW.getCode());
+        apiStressSceneEntity.setExecTime(sceneRequest.getExecTime());
+        apiStressSceneEntity.setUserId(UserContextHolder.getUserId());
+        this.apiStressSceneDao.insert(apiStressSceneEntity);
+
+        return ResultInfo.success();
+    }
+
+    @Override
+    public ResultInfo getSceneList() {
+        return null;
     }
 }

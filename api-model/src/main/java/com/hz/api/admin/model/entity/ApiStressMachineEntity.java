@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,36 +11,34 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "api_stress_scene")
-@TableName(value = "api_stress_scene")
-public class ApiStressSceneEntity implements Serializable {
-
-    private static final long serialVersionUID = -8004224972628001179L;
+@Table(name = "api_stress_data")
+@TableName(value = "api_stress_data")
+public class ApiStressMachineEntity implements Serializable {
+    private static final long serialVersionUID = -8288491231256494183L;
 
     @Id
-    @Column(nullable = false)
+    @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @TableId(type= IdType.AUTO)
     private Long id;
 
     @Column
-    private Long scriptId;
+    private String hostname;
 
     @Column
-    private String sceneName;
+    private String ip;
 
     @Column
-    private Integer sceneState;
+    private Integer machineState;
 
     @Column
-    private Long execTime;
+    private String extension;
 
     @Column
-    @Type(type = "text")
-    private String extraContent;
+    private Date lastOfflineTime;
 
     @Column
-    private Long userId;
+    private Date onlineTime;
 
     @Column
     private Date modifyTime;

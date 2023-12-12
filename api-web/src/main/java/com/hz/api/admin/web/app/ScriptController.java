@@ -1,6 +1,7 @@
 package com.hz.api.admin.web.app;
 
 import com.hz.api.admin.common.Result.ResultInfo;
+import com.hz.api.admin.model.request.SceneRequest;
 import com.hz.api.admin.web.service.ScriptService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,5 +36,8 @@ public class ScriptController {
         return ResultInfo.success();
     }
 
-
+    @PostMapping("/scene/add")
+    public ResultInfo addScene(@RequestBody SceneRequest sceneRequest){
+        return scriptService.addScene(sceneRequest);
+    }
 }
