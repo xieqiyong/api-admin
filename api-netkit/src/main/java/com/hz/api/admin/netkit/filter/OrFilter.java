@@ -1,6 +1,7 @@
 package com.hz.api.admin.netkit.filter;
 
-import com.perfma.xsea.data.collector.netkit.packet.Packet;
+
+import com.hz.api.admin.netkit.packet.Packet;
 
 /**
  * @author zhangzxiang91@gmail.com

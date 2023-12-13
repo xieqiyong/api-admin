@@ -1,12 +1,10 @@
 package com.hz.api.admin.engine.transport;
 
-import com.perfma.boot.core.PerfmaAppContext;
-import com.perfma.xsea.data.collector.common.execute.MatchSourceExecutor;
-import com.perfma.xsea.data.collector.netkit.server.ConnectionManager;
-import com.perfma.xsea.data.collector.netkit.server.NetkitServer;
-import com.perfma.xsea.data.collector.netkit.server.PacketHandler;
+import com.hz.api.admin.engine.execute.MatchSourceExecutor;
+import com.hz.api.admin.netkit.server.ConnectionManager;
+import com.hz.api.admin.netkit.server.NetkitServer;
+import com.hz.api.admin.netkit.server.PacketHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration
 @Slf4j
-public class DataServerConfiguration implements ApplicationContextAware {
+public class EngineServerConfiguration implements ApplicationContextAware {
 
     public static final String ADVERTISED_ENDPOINT_KEY = "transport.advertisedEndpoint";
 
@@ -90,16 +88,13 @@ public class DataServerConfiguration implements ApplicationContextAware {
 
     @Bean(destroyMethod = "shutdown")
     public NetkitServer netkitServer(ConnectionManager netkitConnectionManager) {
-        if (StringUtils.isBlank(advertisedEndpoint)) {
-            advertisedEndpoint = PerfmaAppContext.get().getHostIp() + ":" + listenerPort;
-        }
         Collection<PacketHandler> packetHandlers = applicationContext.getBeansOfType(PacketHandler.class).values();
         NetkitServer server = new NetkitServer(netkitConnectionManager);
         server.setPort(listenerPort);
         server.setChannelReadTimeoutMs(TimeUnit.MINUTES.toMillis(5));
         packetHandlers.forEach(server::addPacketHandler);
         server.start();
-        log.info("Data Collector Server Start Success...");
+        log.info("通信端启动成功");
         return server;
     }
 }

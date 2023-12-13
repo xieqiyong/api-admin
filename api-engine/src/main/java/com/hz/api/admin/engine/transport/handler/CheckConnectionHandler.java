@@ -1,16 +1,14 @@
 package com.hz.api.admin.engine.transport.handler;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import com.perfma.xsea.data.collector.base.packet.CheckConnectionPacket;
-import com.perfma.xsea.data.collector.exception.DataServerException;
-import com.perfma.xsea.data.collector.model.ClientInfo;
-import com.perfma.xsea.data.collector.model.CollectorErrorEnum;
-import com.perfma.xsea.data.collector.netkit.packet.Packet;
-import com.perfma.xsea.data.collector.netkit.packet.PacketError;
-import com.perfma.xsea.data.collector.netkit.server.ConnectionClosedException;
-import com.perfma.xsea.data.collector.netkit.server.NetkitConnection;
-import com.perfma.xsea.data.collector.transport.ClientConnectionManager;
-import com.perfma.xsea.data.collector.utils.Security;
+import com.hz.api.admin.engine.transport.ClientConnectionManager;
+import com.hz.api.admin.model.message.ClientInfo;
+import com.hz.api.admin.netkit.exception.BizException;
+import com.hz.api.admin.netkit.packet.Packet;
+import com.hz.api.admin.netkit.packet.PacketError;
+import com.hz.api.admin.netkit.server.ConnectionClosedException;
+import com.hz.api.admin.netkit.server.NetkitConnection;
+import com.hz.api.admin.packet.CheckConnectionPacket;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -52,15 +50,6 @@ public class CheckConnectionHandler extends AbstractPacketHandler<CheckConnectio
         }
         CheckConnectionPacket reply = Packet.createResult(packet);
         try {
-            String authKey = packet.getAuthKey();
-            if (StringUtils.isBlank(authKey)) {
-                reply.setError(PacketError.buildError(CollectorErrorEnum.AUTH_FAILED.getErrorCode(), CollectorErrorEnum.AUTH_FAILED.getErrorMsg()));
-                netkitConnection.sendPacket(reply).addListener((ChannelFutureListener) future -> netkitConnection.close());
-            }
-            if (Boolean.FALSE.equals(Security.checkUserSecurityValue(packet.getAuthUser(), authKey))) {
-                reply.setError(PacketError.buildError(CollectorErrorEnum.AUTH_FAILED.getErrorCode(), CollectorErrorEnum.AUTH_FAILED.getErrorMsg()));
-                netkitConnection.sendPacket(reply).addListener((ChannelFutureListener) future -> netkitConnection.close());
-            }
             reply.setClientId(packet.getClientId());
             reply.setExtensions(packet.getExtensions());
             reply.setMachineInfo(packet.getMachineInfo());
@@ -79,9 +68,10 @@ public class CheckConnectionHandler extends AbstractPacketHandler<CheckConnectio
                 }
             });
             localCache.asMap().put(packet.getClientId(), netkitConnection.getChannelId());
-        } catch (DataServerException | ConnectionClosedException e) {
-            reply.setError(PacketError.buildError(CollectorErrorEnum.AUTH_FAILED.getErrorCode(), CollectorErrorEnum.AUTH_FAILED.getErrorMsg()));
+        } catch (BizException e) {
             netkitConnection.sendPacket(reply).addListener((ChannelFutureListener) future -> netkitConnection.close());
+        } catch (ConnectionClosedException e) {
+            throw new RuntimeException(e);
         }
         return null;
     }

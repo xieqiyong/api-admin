@@ -35,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>com.hz.api.admin</groupId>
-            <artifactId>api-netkit</artifactId>
+            <artifactId>api-packet</artifactId>
             <version>${reversion}</version>
         </dependency>
     </dependencies>

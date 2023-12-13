@@ -22,6 +22,7 @@
         <module>api-engine</module>
         <module>api-jmeter-client</module>
         <module>api-netkit</module>
+        <module>api-packet</module>
     </modules>
 
     <properties>
